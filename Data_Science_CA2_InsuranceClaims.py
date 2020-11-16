@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 13 10:24:47 2020
-
 @author: William Hadnett D00223305
 """
 
@@ -54,3 +52,59 @@ data.describe()
 # Childern - Predictor Variable - Numerical
 # Smoker - Predictor Variable - Categorical
 # Region - Predictor Variable - Categorical
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 2 - Clean the Data
+# =============================================================================
+
+#Age
+print(data.Age.min()) #Min Age = 3
+#Dataset should only contain adults. Therefore over 18.
+data[data.Age < 18].Age.count() #Count under 18 = 1
+data = data.drop(data[data.Age < 18].index) 
+
+print(data.Age.max()) #Not Acceptable: Max Age = 559
+data = data.drop(data[data.Age == 559].index) 
+
+print(data.Age.min()) #Min: 18
+print(data.Age.max()) #Max: 64
+
+#YearsHealthInsurance
+print(data.YearsHealthInsurance.min()) #Acceptable: 1.0
+print(data.YearsHealthInsurance.max()) #Acceptable: 52.0
+
+#Gender
+numberGender = data.Gender.value_counts()
+print(numberGender)
+#Misspelled Genders 'fmale' & 'femael' remove since only one of each mistake.
+#fmale could mean either male or female due to one letter difference.
+data = data.drop(data[data.Gender == 'fmale'].index) 
+data = data.drop(data[data.Gender == 'femael'].index) 
+print(data.Gender.unique()) #Deal with 'nan' in Step 3.
+#Changed to numerical step 7.
+
+#BMI
+print(data.BMI.min()) #Acceptable: 15.96
+print(data.BMI.max()) #Acceptable: 53.13
+
+#Children
+print(data.Children.min()) #Min: 0
+print(data.Children.max()) #Max: 21 (Acceptable: Possible to have 21 children)
+
+#Smoker
+numberSmoker = data.Smoker.value_counts()
+print(numberSmoker) #Acceptable 'yes' or 'no'. Changed to numerical step7.
+
+#Region
+numberRegion = data.Region.value_counts()
+print(numberRegion) 
+#Acceptable 'southeast', 'northeast', 'southwest' or 'northwest'. Changed to 
+#numerical step 7.
+
+#TotalClaims 
+print(data.TotalClaims.min()) #Not Acceptable: -46889.26 (Refund/Rebate)
+data[data.TotalClaims < 0].TotalClaims.count() # 3 TotalClaims under 0
+data = data.drop(data[data.TotalClaims < 0].index) 
+data[data.TotalClaims < 0].TotalClaims.count() # 3 TotalClaims under 0
+
+print(data.TotalClaims.max()) #Acceptable: 63770.43
