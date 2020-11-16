@@ -108,3 +108,48 @@ data = data.drop(data[data.TotalClaims < 0].index)
 data[data.TotalClaims < 0].TotalClaims.count() # 3 TotalClaims under 0
 
 print(data.TotalClaims.max()) #Acceptable: 63770.43
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 3 - Identify and Deal with Missing Values
+# =============================================================================
+
+data.isnull().sum()
+
+#Age                     1
+#YearsHealthInsurance    1
+#Gender                  1
+#BMI                     2
+#Children                2
+#Smoker                  0
+#Region                  8
+#TotalClaims             0
+
+#Drop Missing Age
+data = data.drop(data[data.Age.isnull()].index) 
+
+#Drop Missing YearsHealthInsurance
+data = data.drop(data[data.YearsHealthInsurance.isnull()].index) 
+
+#Drop Missing Gender
+data = data.drop(data[data.Gender.isnull()].index) 
+
+#Drop Missing BMI
+data = data.drop(data[data.BMI.isnull()].index) 
+
+#Drop Missing Children
+data = data.drop(data[data.Children.isnull()].index) 
+
+#Handle Missing Region
+mode = data.mode()['Region'][0] #Mode = 'southeast'
+data['Region'].fillna("southeast", inplace = True)
+
+data.isnull().sum()
+
+#Age                     0
+#YearsHealthInsurance    0
+#Gender                  0
+#BMI                     0
+#Children                0
+#Smoker                  0
+#Region                  0
+#TotalClaims             0
