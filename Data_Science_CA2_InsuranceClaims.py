@@ -212,5 +212,130 @@ data[data.TotalClaims > outerFence].TotalClaims.count()
 #6 Extreme outliers identified - dropped below:
 data = data.drop(data[data.TotalClaims > outerFence].index) 
 
+# =============================================================================
+# Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Univariate
+# =============================================================================
+
+########## Categorical Analysis #############
+#Gender - Good Gender Ratio - Almost equal split = Male: 50.57, Female: 49.43
+percentFemale = (data[data.Gender == 'female'].Age.count() / data.Gender.count()) * 100
+percentMale = (data[data.Gender == 'male'].Age.count() / data.Gender.count()) * 100
+print("Female: ", percentFemale, "Male: " , percentMale)
+
+numberGender = data.Gender.value_counts(normalize=True)
+numberGender.plot.pie()
+plt.show()
+
+#Smoker
+#Greater number of non-smokers than smokers = Smoker: 19.89, Non Smoker: 80.11 
+percentSmoker = (data[data.Smoker == 'yes'].Smoker.count() / data.Smoker.count()) * 100
+percentNonSmoker = (data[data.Smoker == 'no'].Smoker.count() / data.Smoker.count()) * 100
+print("Smoker: ", percentSmoker, "Non Smoker: " , percentNonSmoker)
+
+numberSmoker = data.Smoker.value_counts(normalize=True)
+numberSmoker.plot.pie()
+plt.show()
+
+#Region
+numberRegion = data.Region.value_counts() 
+#Number of claims from regions almost equal, with southeast having slightly more
+#claims than northwest, northeast and southwest. 
+numberRegion.plot.barh()
+plt.title("Regions")
+plt.show()
+
+########## Numerical Analysis #############
+
+#Age
+ageMin = data.Age.min()
+ageMax = data.Age.max()
+ageMean = data.Age.mean()
+ageMode = data.mode()['Age'][0]
+
+print("Max Age: ", ageMax , " Min Age: ", ageMin)
+print("Mean Age: ", ageMean, " Mode Age: ", ageMode)
+
+#Mean Age 39.12, Mode Age: 18, Min: 18, Max: 64
+data.describe().Age
+sns.boxplot(x=data.Age)
+plt.show()
+
+sns.distplot(data.Age, kde = False, bins=5)
+plt.show()
+
+#YearsHealthInsurance
+yearMin = data.YearsHealthInsurance.min()
+yearMax = data.YearsHealthInsurance.max()
+yearMean = data.YearsHealthInsurance.mean()
+
+print("Max Year: ", yearMax , " Min Year: ", yearMin)
+print("Mean Years: ", yearMean)
+
+#Min Number of Years with this insurance company 1
+#Max Number of Years with this insurance company 52
+#Average Number of Years with this insurance company 20.61
+data.describe().YearsHealthInsurance
+sns.boxplot(x=data.YearsHealthInsurance)
+plt.show()
+
+#The must frequent type of claim comes from new customers
+#who are with this insurance company under 10 years. 400+
+sns.distplot(data.YearsHealthInsurance, kde = False, bins=5)
+plt.show()
+
+#BMI
+bmiMin = data.BMI.min() #15.96
+bmiMax = data.BMI.max() #53.13
+bmiMean = data.BMI.mean() #30.61
+bmiMedian = data.BMI.median() #30.3
+
+print("Max BMI: ", bmiMax , " Min BMI: ", bmiMin)
+print("Mean BMI: ", bmiMean, " Median BMI: ", bmiMedian)
+
+
+#BMI follows bell curve (normal distribution), which to be expected if we 
+#take the BMI of 1300+ individuals at random. 
+sns.distplot(data.BMI, kde = True, bins=5)
+plt.show()
+
+bmiSTD = np.std(data.BMI) #6.08
+
+#TotalClaims
+totalMin = data.TotalClaims.min() 
+totalMax = data.TotalClaims.max() 
+totalMean = data.TotalClaims.mean() 
+totalMedian = data.TotalClaims.median() 
+
+print("Max Total Claims: ", totalMax , " Min Total Claims: ", totalMin)
+print("Mean Total Claims: ", totalMean, " Median Total Claims: ", totalMedian)
+
+#The majority of customers seem to have accumlated claims which total between
+#$0 and $20,000 with only a small proportion of the customer base exceeding
+#$20,000
+sns.distplot(data.TotalClaims, kde = False, bins=5)
+plt.show()
+
+(data[data.TotalClaims < 20000].TotalClaims.count() / data.TotalClaims.count()) * 100 #80.18
+(data[data.TotalClaims >= 20000].TotalClaims.count() / data.TotalClaims.count()) * 100 #80.18
+
+totalClaimsSTD = np.std(data.TotalClaims) #11595.07
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Bivariate 
+# =============================================================================
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+plt.scatter(data.BMI,data.TotalClaims)
+plt.title("BMI vs Total Claims")
+plt.xlabel("BMI")
+plt.ylabel("Total Claims")
+plt.show()
+
+sns.heatmap(data[['BMI','TotalClaims']].corr(), annot=True, cmap = 'Reds')
+plt.show()
+
+sns.heatmap(data[['Age','BMI','TotalClaims', 'YearsHealthInsurance', 'Children']].corr(), annot=True, cmap = 'Reds')
+plt.show()
+
 
 
