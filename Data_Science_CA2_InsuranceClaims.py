@@ -90,6 +90,7 @@ print(data.BMI.max()) #Acceptable: 53.13
 #Children
 print(data.Children.min()) #Min: 0
 print(data.Children.max()) #Max: 21 (Acceptable: Possible to have 21 children)
+#May be considered an outlier in step 4.
 
 #Smoker
 numberSmoker = data.Smoker.value_counts()
@@ -153,3 +154,63 @@ data.isnull().sum()
 #Smoker                  0
 #Region                  0
 #TotalClaims             0
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 4 - Identify and Deal with Outliers
+# =============================================================================
+
+data.info()
+
+#Examine Age - OK
+data.Age.describe()
+figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(x=data.Age)
+plt.show()
+#Values look ok, with no outliers.
+
+#Examine YearsHealthInsurance - OK
+data.YearsHealthInsurance.describe()
+figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(x=data.YearsHealthInsurance)
+plt.show()
+#Values look ok, with no outliers.
+
+#Examine BMI - OK
+data.BMI.describe()
+figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(x=data.BMI)
+plt.show()
+#Outliers are present, but look resonible - no extreme outliers.
+
+#Examine Children - NOT OK 
+data.Children.describe()
+figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(x=data.Children)
+plt.show()
+#One outlier present - extreme outlier - Removed below:  
+data = data.drop(data[data.Children == 21].index) 
+
+#Examine TotalClaims - Possible Extreme Outliers
+data.TotalClaims.describe()
+figure(num=None, figsize=(8, 6), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(x=data.TotalClaims)
+plt.show()
+
+#Interquartile Range
+q1 = data.TotalClaims.quantile(.25)
+q3 = data.TotalClaims.quantile(.75)
+iqr = q3 - q1 
+
+#Detect if outliers are mild or extreme.
+#https://www.itl.nist.gov/div898/handbook/prc/section1/prc16.htm
+#upper inner fence = q3+1.5*iqr = mild outliers
+#upper outer fence = q3+3*iqr = extreme outliers
+
+innerFence = q3+(1.5*iqr) #InnerFence: 34213.6
+outerFence = q3+(3*iqr) #OuterFence: 51910.4
+data[data.TotalClaims > outerFence].TotalClaims.count()
+#6 Extreme outliers identified - dropped below:
+data = data.drop(data[data.TotalClaims > outerFence].index) 
+
+
+
