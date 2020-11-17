@@ -523,9 +523,9 @@ data.drop('YearsHealthInsurance', axis = 1, inplace = True)
 # Exploratiry Data Analysis - STEP 10 - Split Train and Test Data
 # =============================================================================
 
-#Set the Response and the predictor variables
 #x: Predictors
-x = data[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']] #pandas dataframe
+x = data[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']]
+#y: Response
 y = data['TotalClaims'] #Pandas series
 
 from sklearn.model_selection import train_test_split
