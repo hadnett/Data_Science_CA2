@@ -324,7 +324,7 @@ totalClaimsSTD = np.std(data.TotalClaims) #11595.07
 # Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Bivariate 
 # =============================================================================
 
-#Numerical - Numerical
+#### Numerical - Numerical ####
 
 #I expected to see a much large correlation here. However, only in some cases
 #does the total price of claims increase when BMI increases. If a correlation
@@ -346,7 +346,7 @@ figure(num=None, figsize=(7, 7), dpi=80, facecolor='w', edgecolor='k')
 sns.heatmap(data[['Age', 'YearsHealthInsurance','Children','TotalClaims']].corr(), annot=True, cmap = 'Reds')
 plt.show()
 
-#Numerical - Categorical
+#### Numerical - Categorical ####
 
 #After reviewing both the groupby table and the boxplot it is clear that 
 #smokers have significantly larger total calims than non smokers. With the 
@@ -388,11 +388,28 @@ figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 sns.boxplot(data.Region, data.TotalClaims)
 plt.show()
 
-#Categorical - Categorical 
+#### Categorical - Categorical ####
+#Larger number of non smokers (1055) vs smokers (262)
+data.Smoker.value_counts()
 
+#Smoker by Region
+data['smoker_rate']= np.where(data.Smoker=='yes',1,0)
+smokerByRegion= data.groupby('Region')['smoker_rate'].mean()
 
+#From this bar chart we can infer that there are more smokers in the southeast
+#region than any of the other three regions.
+smokerByRegion.plot.bar()
+plt.title("Smoker by Region")
+plt.show()
 
+#Smokers by Gender
+smokerByGender = data.groupby('Gender')['smoker_rate'].mean()
+#From this bar chart we can infer that there are more male smokers than female
+#smokers.
+smokerByGender.plot.bar()
+plt.title("Smoker by Gender")
+plt.show()
 
-
-
-
+# =============================================================================
+# Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Bivariate 
+# =============================================================================
