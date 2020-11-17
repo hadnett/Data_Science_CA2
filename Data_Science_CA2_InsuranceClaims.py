@@ -470,23 +470,6 @@ print(len(data.AccountNumber.unique())) #1317 Unique Values - Of No Value due to
 data.drop('AccountNumber', axis = 1, inplace = True)
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 6 - Characterise & Drop Variables 
-# =============================================================================
-
-# TotalClaims - Response Variable - Numerical - Regression Model Requried
-# AccountNumber - Categorical - Unique - Cannot be used due to uniquness
-# Age - Predictor Variable - Numerical
-# YearsHealthInsurance - Predictor Variable - Numerical
-# Gender - Predictor Variable - Categorical 
-# BMI - Predictor Variable - Numerical
-# Childern - Predictor Variable - Numerical
-# Smoker - Predictor Variable - Categorical
-# Region - Predictor Variable - Categorical
-
-print(len(data.AccountNumber.unique())) #1317 Unique Values - Of No Value due to uniqueness
-data.drop('AccountNumber', axis = 1, inplace = True)
-
-# =============================================================================
 # Exploratiry Data Analysis - STEP 7 - Construct New Variables 
 # =============================================================================
 
@@ -515,7 +498,7 @@ plt.show()
 # -----   --------                  -----------
 # 1       Smoker_Rate               0.78
 # 2       Age                       0.3
-# 3       YearsHealthInsurance      0.3
+# 3       YearsHealthInsurance      0.3 #Removed due to close correlation with Age
 # 4       BMI                       0.18
 # 5       Children                  0.078
 # 6       southeast_num             0.067
@@ -535,3 +518,20 @@ data[['Age','YearsHealthInsurance']].corr()
 #claims against their Health Insurance Company.
 
 data.drop('YearsHealthInsurance', axis = 1, inplace = True)
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 10 - Split Train and Test Data
+# =============================================================================
+
+#Set the Response and the predictor variables
+#x: Predictors
+x = data[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']] #pandas dataframe
+y = data['TotalClaims'] #Pandas series
+
+from sklearn.model_selection import train_test_split
+
+#split train 66.7%, test 33.3%
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.333)
+
+y_train
+x_train
