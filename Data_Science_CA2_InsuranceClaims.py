@@ -495,7 +495,34 @@ data.drop('AccountNumber', axis = 1, inplace = True)
 #Gender
 data['gender_num']= np.where(data.Gender=='male',1,0)
 
-#Region
+#Region - 3 Variables required.
 data['southeast_num']=np.where(data.Region =="southeast",1,0)
 data['southwest_num']=np.where(data.Region =="southwest",1,0)
 data['northeast_num']=np.where(data.Region =="northeast",1,0)
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 8 - Support Construction of Model
+# =============================================================================
+
+figure(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
+sns.pairplot(data)
+
+figure(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
+sns.heatmap(data.corr(), annot=True, cmap = 'Reds')
+plt.show()
+
+# Order   Variable                  Correlation  
+# -----   --------                  -----------
+# 1       Smoker_Rate               0.78
+# 2       Age                       0.3
+# 3       YearsHealthInsurance      0.3
+# 4       BMI                       0.18
+# 5       Children                  0.078
+# 6       southeast_num             0.067
+# 7       gender_num                0.056
+# 8       southwest_num            -0.036
+# 9       northeast_num             0.0058
+
+
+
+
