@@ -239,7 +239,7 @@ plt.show()
 #Region
 numberRegion = data.Region.value_counts() 
 #Number of claims from regions almost equal, with southeast having slightly more
-#claims than northwest, northeast and southwest. 
+#total claims than northwest, northeast and southwest. 
 numberRegion.plot.barh()
 plt.title("Regions")
 plt.show()
@@ -324,6 +324,11 @@ totalClaimsSTD = np.std(data.TotalClaims) #11595.07
 # Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Bivariate 
 # =============================================================================
 
+#Numerical - Numerical
+
+#I expected to see a much large correlation here. However, only in some cases
+#does the total price of claims increase when BMI increases. If a correlation
+#is present between BMI and TotalClaims it is very slight.
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(data.BMI,data.TotalClaims)
 plt.title("BMI vs Total Claims")
@@ -331,11 +336,63 @@ plt.xlabel("BMI")
 plt.ylabel("Total Claims")
 plt.show()
 
-sns.heatmap(data[['BMI','TotalClaims']].corr(), annot=True, cmap = 'Reds')
+#None of the variables in question have an extremely strong correlation with
+#the TotalClaims variable. Age and YearsHealthInsurance seem to have the 
+#strongest correlation of 0.3, followed by number of Children 0.078. However, There is
+#a strong correlation between Age and YearsHealthInsurance. This will have to
+#investigated in step 9 a they may be multicolinear.
+data[['Age','YearsHealthInsurance','Children','TotalClaims']].corr()
+figure(num=None, figsize=(7, 7), dpi=80, facecolor='w', edgecolor='k')
+sns.heatmap(data[['Age', 'YearsHealthInsurance','Children','TotalClaims']].corr(), annot=True, cmap = 'Reds')
 plt.show()
 
-sns.heatmap(data[['Age','BMI','TotalClaims', 'YearsHealthInsurance', 'Children']].corr(), annot=True, cmap = 'Reds')
+#Numerical - Categorical
+
+#After reviewing both the groupby table and the boxplot it is clear that 
+#smokers have significantly larger total calims than non smokers. With the 
+#mean total claims price being $31140.57 for smokers and only $8433.87 for
+#non smokers.
+data.groupby('Smoker')['TotalClaims'].mean()
+data.groupby('Smoker')['TotalClaims'].median()
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(data.Smoker, data.TotalClaims)
 plt.show()
+
+#Gender vs BMI
+#Both males and females have similiar BMI's within the dataset. 
+#Males have an mean BMI of 30.59 and Females have a BMI of 30.02
+data.groupby('Gender')['BMI'].mean()
+data.groupby('Gender')['BMI'].median()
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(data.Gender, data.BMI)
+plt.show()
+
+#Gender vs Age
+#The the age of males and females is well balanced within this dataset.
+#Males have a mean age of 38.72 and females have a mean age of 39.53.#
+data.groupby('Gender')['Age'].mean()
+data.groupby('Gender')['Age'].median()
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(data.Gender, data.Age)
+plt.show()
+
+#Region vs TotalClaims 
+#The mean totalClaims across each region is very similiar, with northeast
+#having a slight large mean than the other three. The total claims also 
+#seem to vary more in the southeast region and northeast region. The souteast
+#region also seems to have significantly large max totalClaims
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.boxplot(data.Region, data.TotalClaims)
+plt.show()
+
+#Categorical - Categorical 
+
+
+
+
 
 
 
