@@ -324,7 +324,7 @@ totalClaimsSTD = np.std(data.TotalClaims) #11595.07
 # Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Bivariate 
 # =============================================================================
 
-#### Numerical - Numerical ####
+#### Numerical - Numerical #### (Possibly do age vs totalclaims)
 
 #I expected to see a much large correlation here. However, only in some cases
 #does the total price of claims increase when BMI increases. If a correlation
@@ -411,5 +411,37 @@ plt.title("Smoker by Gender")
 plt.show()
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Bivariate 
+# Exploratiry Data Analysis - STEP 5 - Exploratory Analysis - Multivariate
 # =============================================================================
+
+result = pd.pivot_table(data=data, index='Region', columns='Gender',values='smoker_rate')
+print(result)
+
+#Males from the southeast region are more likely to smoke and females from the
+#southwest region are least likely to smoke.
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.heatmap(result, annot=True, cmap = 'RdYlGn', center=0.117)
+plt.show()
+
+#From the heatmap below we can infer that males from the souteast region have higher
+#totalclaims and females from southwest have smaller totalClaims.
+result1 = pd.pivot_table(data=data, index='Region', columns='Gender',values='TotalClaims')
+print(result1)
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.heatmap(result1, annot=True, cmap = 'RdYlGn', center=0.117)
+plt.show()
+
+
+#From that heatmap below we can see that for each region people who smoked had
+#a much higher TotalClaims mean than people who do not smoke. With the mean value
+#of TotalClaims being the largest for smokers in the southeast region and the
+#mean value of claims being the least for non smokers in the southwest region.
+result2 = pd.pivot_table(data=data, index='Region', columns='Smoker',values='TotalClaims')
+print(result2)
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.heatmap(result2, annot=True, cmap = 'RdYlGn', center=0.117)
+plt.show()
+
+
