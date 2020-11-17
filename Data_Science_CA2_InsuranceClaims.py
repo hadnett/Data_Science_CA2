@@ -523,6 +523,15 @@ plt.show()
 # 8       southwest_num            -0.036
 # 9       northeast_num             0.0058
 
+# =============================================================================
+# Exploratiry Data Analysis - STEP 9 - Multicolinear Data
+# =============================================================================
 
+data[['Age','YearsHealthInsurance']].corr()
 
+#Age and YearsHealthInsurance have a correlation of 0.99, suggesting they
+#are multicolinear. I have decided to drop YearsHealthInsurance as a persons
+#age typically affects their health and this in turn will result in more
+#claims against their Health Insurance Company.
 
+data.drop('YearsHealthInsurance', axis = 1, inplace = True)
