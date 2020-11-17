@@ -444,4 +444,29 @@ figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 sns.heatmap(result2, annot=True, cmap = 'RdYlGn', center=0.117)
 plt.show()
 
+result2 = pd.pivot_table(data=data, index='Region', columns='Smoker',values='BMI')
+print(result2)
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+sns.heatmap(result2, annot=True, cmap = 'RdYlGn', center=0.117)
+plt.show()
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 6 - Characterise & Drop Variables 
+# =============================================================================
+
+# TotalClaims - Response Variable - Numerical - Regression Model Requried
+# AccountNumber - Categorical - Unique - Cannot be used due to uniquness
+# Age - Predictor Variable - Numerical
+# YearsHealthInsurance - Predictor Variable - Numerical
+# Gender - Predictor Variable - Categorical 
+# BMI - Predictor Variable - Numerical
+# Childern - Predictor Variable - Numerical
+# Smoker - Predictor Variable - Categorical
+# Region - Predictor Variable - Categorical
+
+print(len(data.AccountNumber.unique())) #1317 Unique Values - Of No Value due to uniqueness
+data.drop('AccountNumber', axis = 1, inplace = True)
+
+
 
