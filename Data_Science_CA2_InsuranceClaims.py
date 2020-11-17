@@ -389,6 +389,7 @@ sns.boxplot(data.Region, data.TotalClaims)
 plt.show()
 
 #### Categorical - Categorical ####
+
 #Larger number of non smokers (1055) vs smokers (262)
 data.Smoker.value_counts()
 
@@ -468,5 +469,33 @@ plt.show()
 print(len(data.AccountNumber.unique())) #1317 Unique Values - Of No Value due to uniqueness
 data.drop('AccountNumber', axis = 1, inplace = True)
 
+# =============================================================================
+# Exploratiry Data Analysis - STEP 6 - Characterise & Drop Variables 
+# =============================================================================
 
+# TotalClaims - Response Variable - Numerical - Regression Model Requried
+# AccountNumber - Categorical - Unique - Cannot be used due to uniquness
+# Age - Predictor Variable - Numerical
+# YearsHealthInsurance - Predictor Variable - Numerical
+# Gender - Predictor Variable - Categorical 
+# BMI - Predictor Variable - Numerical
+# Childern - Predictor Variable - Numerical
+# Smoker - Predictor Variable - Categorical
+# Region - Predictor Variable - Categorical
 
+print(len(data.AccountNumber.unique())) #1317 Unique Values - Of No Value due to uniqueness
+data.drop('AccountNumber', axis = 1, inplace = True)
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 7 - Construct New Variables 
+# =============================================================================
+
+#Smoker - Already Converted to Numerical Step 5 Bivariate Analysis.
+
+#Gender
+data['gender_num']= np.where(data.Gender=='male',1,0)
+
+#Region
+data['southeast_num']=np.where(data.Region =="southeast",1,0)
+data['southwest_num']=np.where(data.Region =="southwest",1,0)
+data['northeast_num']=np.where(data.Region =="northeast",1,0)
