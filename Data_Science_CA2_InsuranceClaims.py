@@ -695,7 +695,7 @@ p=6
 Rsquared_adj6 = 1 - (1-Rsquared6)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & gender_num: "+str(Rsquared6)) 
 #0.727 Explained about 72.7% of variation
-print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & gender_num: "+str(Rsquared_adj6)) 
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num: "+str(Rsquared_adj6)) 
 #0.725 The same as model 5. Review!
 
 ####### Model 7 add southwest_num variable #######
@@ -719,7 +719,33 @@ Rsquared7 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.73
 N= data.TotalClaims.count() #1317
 p=7
 Rsquared_adj7 = 1 - (1-Rsquared7)*(N-1)/(N-p-1)
-print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & gender_num: "+str(Rsquared7)) 
+print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num & southwest_num: "+str(Rsquared7)) 
 #0.728 Explained about 72.8% of variation
-print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & gender_num: "+str(Rsquared_adj7)) 
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num & southwest_num : "+str(Rsquared_adj7)) 
 #0.726 Up by 0.001. Southwest Region adds value to the model.
+
+####### Model 8 add northeast_num variable #######
+model8 = LinearRegression()
+
+model8.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']], y_train)
+
+print(model8.coef_)
+print(model8.intercept_)
+#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+
+Output = pd.DataFrame(model8.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num'], columns = ['Coeff'])
+
+#Generate predictions for the train data
+predictions_train = model8.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']])
+
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30032856846.9279
+
+Rsquared8 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.728
+
+N= data.TotalClaims.count() #1317
+p=8
+Rsquared_adj8 = 1 - (1-Rsquared8)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num, southwest_num & northeast_num: "+str(Rsquared8)) 
+#0.728 Explained about 72.8% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num, southwest_num & northeast_num: "+str(Rsquared_adj8)) 
+#0.727 Up by 0.001. Northeast Region adds value to the model.
