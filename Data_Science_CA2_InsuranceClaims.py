@@ -535,3 +535,34 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.333)
 
 y_train
 x_train
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 11 - Develop Linear Regression Model
+# =============================================================================
+
+from sklearn.linear_model import LinearRegression
+model1 = LinearRegression()
+
+
+#First add smoker_rate to model
+model1.fit(x_train[['smoker_rate']], y_train)
+
+print(model1.coef_)
+print(model1.intercept_)
+#So TotalClaims = 21871.30 + 8326.85*smoker_rate
+
+Output = pd.DataFrame(model1.coef_, ['Smoker'], columns = ['Coeff'])
+
+#Generate predictions for the train data
+predictions_train = model1.predict(x_train[['smoker_rate']])
+
+raw_sum_sq_errors = sum((y_train.mean() - y_train)**2)
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2)
+
+Rsquared1 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.59
+
+N= data.TotalClaims.count() #1317
+p=1 # one predictor used
+Rsquared_adj1 = 1 - (1-Rsquared1)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate: "+str(Rsquared1)) #0.588
+print("Rsquared Adjusted Regression Model with Smoker Rate: "+str(Rsquared_adj1)) #0.588
