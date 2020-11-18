@@ -543,26 +543,53 @@ x_train
 from sklearn.linear_model import LinearRegression
 model1 = LinearRegression()
 
-
 #First add smoker_rate to model
 model1.fit(x_train[['smoker_rate']], y_train)
 
 print(model1.coef_)
 print(model1.intercept_)
-#So TotalClaims = 21871.30 + 8326.85*smoker_rate
+#So TotalClaims = 8326.85 + 21871.30*smoker_rate
 
 Output = pd.DataFrame(model1.coef_, ['Smoker'], columns = ['Coeff'])
 
 #Generate predictions for the train data
 predictions_train = model1.predict(x_train[['smoker_rate']])
 
-raw_sum_sq_errors = sum((y_train.mean() - y_train)**2)
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2)
+raw_sum_sq_errors = sum((y_train.mean() - y_train)**2) # 110552759800.89622
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 45566412768.66808
 
 Rsquared1 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.59
 
 N= data.TotalClaims.count() #1317
 p=1 # one predictor used
 Rsquared_adj1 = 1 - (1-Rsquared1)*(N-1)/(N-p-1)
-print("Rsquared Regression Model with Smoker Rate: "+str(Rsquared1)) #0.588
+print("Rsquared Regression Model with Smoker Rate: "+str(Rsquared1)) 
+#0.588 Explained about 58% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate: "+str(Rsquared_adj1)) #0.588
+
+#Model 2 add Age variable
+model2 = LinearRegression()
+
+model2.fit(x_train[['smoker_rate', 'Age']], y_train)
+
+print(model2.coef_)
+print(model2.intercept_)
+#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+
+Output = pd.DataFrame(model2.coef_, ['Smoker', 'Age'], columns = ['Coeff'])
+
+#Generate predictions for the train data
+predictions_train = model2.predict(x_train[['smoker_rate', 'Age']])
+
+raw_sum_sq_errors = sum((y_train.mean() - y_train)**2) # 110552759800.89622
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 33655558527.587227
+
+Rsquared2 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.70
+
+N= data.TotalClaims.count() #1317
+p=2 # one predictor used
+Rsquared_adj2 = 1 - (1-Rsquared2)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate & Age: "+str(Rsquared2)) 
+#0.696 Explained about 58% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate & Age: "+str(Rsquared_adj2)) 
+#0.695 Up by .107. Age add's further value to model.
