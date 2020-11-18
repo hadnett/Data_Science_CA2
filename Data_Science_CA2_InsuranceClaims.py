@@ -587,7 +587,7 @@ prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 33655558527.5
 Rsquared2 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.70
 
 N= data.TotalClaims.count() #1317
-p=2 # one predictor used
+p=2 
 Rsquared_adj2 = 1 - (1-Rsquared2)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate & Age: "+str(Rsquared2)) 
 #0.696 Explained about 69.6% of variation
@@ -613,35 +613,35 @@ prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 30763503377.4
 Rsquared3 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.72
 
 N= data.TotalClaims.count() #1317
-p=3 # one predictor used
+p=3 
 Rsquared_adj3 = 1 - (1-Rsquared3)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared3)) 
 #0.722 Explained about 72.2% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared_adj3)) 
 #0.721 Up by 0.026. BMI add's further value to model.
 
-####### Model 4 add BMI variable #######
-model3 = LinearRegression()
+####### Model 4 add Children variable #######
+model4 = LinearRegression()
 
-model3.fit(x_train[['smoker_rate', 'Age', 'BMI']], y_train)
+model4.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children']], y_train)
 
-print(model3.coef_)
-print(model3.intercept_)
+print(model4.coef_)
+print(model4.intercept_)
 #So TotalClaims = 8326.85 + 21871.30*smoker_rate
 
-Output = pd.DataFrame(model3.coef_, ['Smoker', 'Age', 'BMI'], columns = ['Coeff'])
+Output = pd.DataFrame(model4.coef_, ['Smoker', 'Age', 'BMI', 'Children'], columns = ['Coeff'])
 
 #Generate predictions for the train data
-predictions_train = model3.predict(x_train[['smoker_rate', 'Age', 'BMI']])
+predictions_train = model4.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children']])
 
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 30763503377.483295
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 30463012535.68084
 
-Rsquared3 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.72
+Rsquared4 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.72
 
 N= data.TotalClaims.count() #1317
-p=3 # one predictor used
-Rsquared_adj3 = 1 - (1-Rsquared3)*(N-1)/(N-p-1)
-print("Rsquared Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared3)) 
-#0.722 Explained about 72.2% of variation
-print("Rsquared Adjusted Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared_adj3)) 
-#0.721 Up by 0.026. BMI add's further value to model.
+p=4 
+Rsquared_adj4 = 1 - (1-Rsquared4)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate, Age, BMI and Children: "+str(Rsquared4)) 
+#0.724 Explained about 72.2% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI & Children: "+str(Rsquared_adj4)) 
+#0.724 Up by 0.003. Children adds value to the model.
