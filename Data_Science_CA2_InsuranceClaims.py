@@ -567,7 +567,7 @@ print("Rsquared Regression Model with Smoker Rate: "+str(Rsquared1))
 #0.588 Explained about 58% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate: "+str(Rsquared_adj1)) #0.588
 
-#Model 2 add Age variable
+####### Model 2 add Age variable #######
 model2 = LinearRegression()
 
 model2.fit(x_train[['smoker_rate', 'Age']], y_train)
@@ -590,6 +590,58 @@ N= data.TotalClaims.count() #1317
 p=2 # one predictor used
 Rsquared_adj2 = 1 - (1-Rsquared2)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate & Age: "+str(Rsquared2)) 
-#0.696 Explained about 58% of variation
+#0.696 Explained about 69.6% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate & Age: "+str(Rsquared_adj2)) 
-#0.695 Up by .107. Age add's further value to model.
+#0.695 Up by 0.107. Age add's further value to model.
+
+####### Model 3 add BMI variable #######
+model3 = LinearRegression()
+
+model3.fit(x_train[['smoker_rate', 'Age', 'BMI']], y_train)
+
+print(model3.coef_)
+print(model3.intercept_)
+#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+
+Output = pd.DataFrame(model3.coef_, ['Smoker', 'Age', 'BMI'], columns = ['Coeff'])
+
+#Generate predictions for the train data
+predictions_train = model3.predict(x_train[['smoker_rate', 'Age', 'BMI']])
+
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 30763503377.483295
+
+Rsquared3 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.72
+
+N= data.TotalClaims.count() #1317
+p=3 # one predictor used
+Rsquared_adj3 = 1 - (1-Rsquared3)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared3)) 
+#0.722 Explained about 72.2% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared_adj3)) 
+#0.721 Up by 0.026. BMI add's further value to model.
+
+####### Model 4 add BMI variable #######
+model3 = LinearRegression()
+
+model3.fit(x_train[['smoker_rate', 'Age', 'BMI']], y_train)
+
+print(model3.coef_)
+print(model3.intercept_)
+#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+
+Output = pd.DataFrame(model3.coef_, ['Smoker', 'Age', 'BMI'], columns = ['Coeff'])
+
+#Generate predictions for the train data
+predictions_train = model3.predict(x_train[['smoker_rate', 'Age', 'BMI']])
+
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 30763503377.483295
+
+Rsquared3 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.72
+
+N= data.TotalClaims.count() #1317
+p=3 # one predictor used
+Rsquared_adj3 = 1 - (1-Rsquared3)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared3)) 
+#0.722 Explained about 72.2% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared_adj3)) 
+#0.721 Up by 0.026. BMI add's further value to model.
