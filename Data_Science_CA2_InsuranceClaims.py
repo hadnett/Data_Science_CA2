@@ -642,6 +642,32 @@ N= data.TotalClaims.count() #1317
 p=4 
 Rsquared_adj4 = 1 - (1-Rsquared4)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age, BMI and Children: "+str(Rsquared4)) 
-#0.724 Explained about 72.2% of variation
+#0.724 Explained about 72.4% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI & Children: "+str(Rsquared_adj4)) 
 #0.724 Up by 0.003. Children adds value to the model.
+
+####### Model 5 add southeast_num variable #######
+model5 = LinearRegression()
+
+model5.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num']], y_train)
+
+print(model5.coef_)
+print(model5.intercept_)
+#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+
+Output = pd.DataFrame(model5.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num'], columns = ['Coeff'])
+
+#Generate predictions for the train data
+predictions_train = model5.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num']])
+
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30242461164.469048
+
+Rsquared5 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.73
+
+N= data.TotalClaims.count() #1317
+p=5 
+Rsquared_adj5 = 1 - (1-Rsquared5)*(N-1)/(N-p-1)
+print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children & southeast_num: "+str(Rsquared5)) 
+#0.726 Explained about 72.6% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children & southeast_num: "+str(Rsquared_adj5)) 
+#0.725 Up by 0.001. Southeast Region adds value to the model.
