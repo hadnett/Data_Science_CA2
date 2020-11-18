@@ -749,3 +749,38 @@ print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast
 #0.728 Explained about 72.8% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num, southwest_num & northeast_num: "+str(Rsquared_adj8)) 
 #0.727 Up by 0.001. Northeast Region adds value to the model.
+
+# =============================================================================
+# Exploratiry Data Analysis - STEP 12 - Evaluating The Model Produced
+# =============================================================================
+
+predictions_test = model8.predict(x_test[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']])
+
+Prediction_test_MAE = sum(abs(predictions_test - y_test))/len(y_test)
+Prediction_test_MAPE = sum(abs((predictions_test - y_test)/y_test))/len(y_test)
+Prediction_test_RMSE = (sum((predictions_test - y_test)**2)/len(y_test))**0.5
+
+print(Prediction_test_MAE) #3727.11
+print(Prediction_test_MAPE) #0.3659
+print(Prediction_test_RMSE) #5523.9222
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+plt.scatter(y_test, predictions_test)
+plt.title("Predictions v Actual Test Values")
+plt.xlabel("Actual values")
+plt.ylabel("Predicted Values")
+plt.show() #Should be close to a straight line
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+plt.scatter(y_test, (predictions_test - y_test)/y_test)
+plt.title("Percentage Errors v Actual Test Values")
+plt.xlabel("Actual values")
+plt.ylabel("Error Values")
+plt.show()
+
+
+
+
+
+
+
