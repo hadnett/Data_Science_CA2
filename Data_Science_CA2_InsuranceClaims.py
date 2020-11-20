@@ -7,6 +7,7 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn import metrics
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 
@@ -453,7 +454,7 @@ sns.heatmap(result2, annot=True, cmap = 'RdYlGn', center=0.117)
 plt.show()
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 6 - Characterise & Drop Variables 
+# Regression Modelling - STEP 6 - Characterise & Drop Variables 
 # =============================================================================
 
 # TotalClaims - Response Variable - Numerical - Regression Model Requried
@@ -470,7 +471,7 @@ print(len(data.AccountNumber.unique())) #1317 Unique Values - Of No Value due to
 data.drop('AccountNumber', axis = 1, inplace = True)
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 7 - Construct New Variables 
+# Regression Modelling - STEP 7 - Construct New Variables 
 # =============================================================================
 
 #Smoker - Already Converted to Numerical Step 5 Bivariate Analysis.
@@ -484,7 +485,7 @@ data['southwest_num']=np.where(data.Region =="southwest",1,0)
 data['northeast_num']=np.where(data.Region =="northeast",1,0)
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 8 - Support Construction of Model
+# Regression Modelling - STEP 8 - Support Construction of Model
 # =============================================================================
 
 figure(num=None, figsize=(12, 12), dpi=80, facecolor='w', edgecolor='k')
@@ -507,7 +508,7 @@ plt.show()
 # 9       northeast_num             0.0058
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 9 - Multicolinear Data
+# Regression Modelling - STEP 9 - Multicolinear Data
 # =============================================================================
 
 data[['Age','YearsHealthInsurance']].corr()
@@ -520,7 +521,7 @@ data[['Age','YearsHealthInsurance']].corr()
 data.drop('YearsHealthInsurance', axis = 1, inplace = True)
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 10 - Split Train and Test Data
+# Regression Modelling - STEP 10 - Split Train and Test Data
 # =============================================================================
 
 #x: Predictors
@@ -537,7 +538,7 @@ y_train
 x_train
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 11 - Develop Linear Regression Model
+# Regression Modelling - STEP 11 - Develop Linear Regression Model
 # =============================================================================
 
 from sklearn.linear_model import LinearRegression
@@ -739,7 +740,6 @@ Output = pd.DataFrame(model8.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southe
 predictions_train = model8.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']])
 
 prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30032856846.9279
-
 Rsquared8 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.728
 
 N= data.TotalClaims.count() #1317
@@ -751,7 +751,7 @@ print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, 
 #0.727 Up by 0.001. Northeast Region adds value to the model.
 
 # =============================================================================
-# Exploratiry Data Analysis - STEP 12 - Evaluating The Model Produced
+# Regression Modelling - STEP 12 - Evaluating The Model Produced
 # =============================================================================
 
 predictions_test = model8.predict(x_test[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']])
@@ -772,15 +772,96 @@ plt.ylabel("Predicted Values")
 plt.show() #Should be close to a straight line
 
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
-plt.scatter(y_test, (predictions_test - y_test)/y_test)
+plt.scatter(y_test, (predictions_test - y_test)/y_test) 
 plt.title("Percentage Errors v Actual Test Values")
 plt.xlabel("Actual values")
 plt.ylabel("Error Values")
 plt.show()
 
+# =============================================================================
+# Additional Analysis  - STEP 13 - Additional Analysis
+# =============================================================================
+#https://www.python-machinelearning.com/multi-layer-perceptron-regressor/
+from sklearn.neural_network import MLPRegressor
+from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.exceptions import ConvergenceWarning
+model = MLPRegressor()
+
+check_parameters = {
+    'hidden_layer_sizes': [(100,100)],
+    'activation': ['identity', 'relu'],
+    'solver': ['adam', 'lbfgs'],
+    'alpha': [0.0001, 0.05],
+    'learning_rate': ['constant'],
+    'learning_rate_init': [0.001]
+}
+
+gridsearchcv = GridSearchCV(model, check_parameters, cv=3)
+gridsearchcv.fit(x_train, y_train)
+#input contains nan infinity or a value too large for dtype('float64')
+
+print(gridsearchcv.best_params_)
+#{'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100), 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'solver': 'lbfgs'}
+model1 = MLPRegressor(hidden_layer_sizes=gridsearchcv.best_params_['hidden_layer_sizes'], activation=gridsearchcv.best_params_['activation'], alpha=gridsearchcv.best_params_['alpha'], 
+                      learning_rate=gridsearchcv.best_params_['learning_rate'], solver=gridsearchcv.best_params_['solver'], 
+                      max_iter=3000, learning_rate_init=gridsearchcv.best_params_['learning_rate_init'])
+
+model1.fit(x_train, y_train)
+
+predictions = model1.predict(x_train)
+
+
+#Calculate performance metrics Accuracy, Error Rate, Precision and Recall from the confusion matrix
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score
+
+
+MSE = mean_squared_error(y_train, predictions)
+Rsquared = r2_score(y_train, predictions) #0.826
+
+prediction_sum_sq_errors = sum((predictions - y_train)**2) 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+#### Evaluate New Model ######
+predictions_test_NM = model1.predict(x_test)
+
+#Return the coefficient of determination R^2 of the prediction.
+model1.score(x_test, y_test)
+
+Prediction_test_MAE = sum(abs(predictions_test_NM - y_test))/len(y_test)
+Prediction_test_MAPE = sum(abs((predictions_test_NM - y_test)/y_test))/len(y_test)
+Prediction_test_RMSE = (sum((predictions_test_NM - y_test)**2)/len(y_test))**0.5
+
+print(Prediction_test_MAE) #2769.3231535905315
+print(Prediction_test_MAPE) #0.29962781836477104
+print(Prediction_test_RMSE) #4273.943251422306
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+plt.scatter(y_test, predictions_test_NM)
+plt.title("Predictions v Actual Test Values")
+plt.xlabel("Actual values")
+plt.ylabel("Predicted Values")
+plt.show() #Should be close to a straight line
+
+figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
+plt.scatter(y_test, (predictions_test_NM - y_test)/y_test) 
+plt.title("Percentage Errors v Actual Test Values")
+plt.xlabel("Actual values")
+plt.ylabel("Percentage Error Values")
+plt.show()
 
 
