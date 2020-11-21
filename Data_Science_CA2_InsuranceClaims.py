@@ -340,7 +340,7 @@ plt.show()
 #None of the variables in question have an extremely strong correlation with
 #the TotalClaims variable. Age and YearsHealthInsurance seem to have the 
 #strongest correlation of 0.3, followed by number of Children 0.078. However, There is
-#a strong correlation between Age and YearsHealthInsurance. This will have to
+#a strong correlation between Age and YearsHealthInsurance. This will have to be
 #investigated in step 9 a they may be multicolinear.
 data[['Age','YearsHealthInsurance','Children','TotalClaims']].corr()
 figure(num=None, figsize=(7, 7), dpi=80, facecolor='w', edgecolor='k')
@@ -549,24 +549,23 @@ model1.fit(x_train[['smoker_rate']], y_train)
 
 print(model1.coef_)
 print(model1.intercept_)
-#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+#So TotalClaims = 8248.47 + 23661.170821*smoker_rate
 
 Output = pd.DataFrame(model1.coef_, ['Smoker'], columns = ['Coeff'])
 
-#Generate predictions for the train data
 predictions_train = model1.predict(x_train[['smoker_rate']])
 
-raw_sum_sq_errors = sum((y_train.mean() - y_train)**2) # 110552759800.89622
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 45566412768.66808
+raw_sum_sq_errors = sum((y_train.mean() - y_train)**2) # 124509375920.14389
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 45058994169.77169
 
-Rsquared1 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.59
+Rsquared1 = 1-prediction_sum_sq_errors/raw_sum_sq_errors
 
 N= data.TotalClaims.count() #1317
 p=1 # one predictor used
 Rsquared_adj1 = 1 - (1-Rsquared1)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate: "+str(Rsquared1)) 
-#0.588 Explained about 58% of variation
-print("Rsquared Adjusted Regression Model with Smoker Rate: "+str(Rsquared_adj1)) #0.588
+#Rquared = 0.63810 Explained about 63.8% of variation
+print("Rsquared Adjusted Regression Model with Smoker Rate: "+str(Rsquared_adj1)) #0.6378
 
 ####### Model 2 add Age variable #######
 model2 = LinearRegression()
@@ -702,52 +701,52 @@ print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, 
 ####### Model 7 add southwest_num variable #######
 model7 = LinearRegression()
 
-model7.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num']], y_train)
+model7.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num','southwest_num']], y_train)
 
 print(model7.coef_)
 print(model7.intercept_)
 #So TotalClaims = 8326.85 + 21871.30*smoker_rate
 
-Output = pd.DataFrame(model7.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num'], columns = ['Coeff'])
+Output = pd.DataFrame(model7.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num'], columns = ['Coeff'])
 
 #Generate predictions for the train data
-predictions_train = model7.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num']])
+predictions_train = model7.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num']])
 
 prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30093846357.72852
 
 Rsquared7 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.73
 
 N= data.TotalClaims.count() #1317
-p=7
+p=6
 Rsquared_adj7 = 1 - (1-Rsquared7)*(N-1)/(N-p-1)
-print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num & southwest_num: "+str(Rsquared7)) 
+print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & southwest_num: "+str(Rsquared7)) 
 #0.728 Explained about 72.8% of variation
-print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num & southwest_num : "+str(Rsquared_adj7)) 
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & southwest_num : "+str(Rsquared_adj7)) 
 #0.726 Up by 0.001. Southwest Region adds value to the model.
 
 ####### Model 8 add northeast_num variable #######
 model8 = LinearRegression()
 
-model8.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']], y_train)
+model8.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num', 'northeast_num']], y_train)
 
 print(model8.coef_)
 print(model8.intercept_)
 #So TotalClaims = 8326.85 + 21871.30*smoker_rate
 
-Output = pd.DataFrame(model8.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num'], columns = ['Coeff'])
+Output = pd.DataFrame(model8.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num', 'northeast_num'], columns = ['Coeff'])
 
 #Generate predictions for the train data
-predictions_train = model8.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']])
+predictions_train = model8.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num', 'northeast_num']])
 
 prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30032856846.9279
 Rsquared8 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.728
 
 N= data.TotalClaims.count() #1317
-p=8
+p=7
 Rsquared_adj8 = 1 - (1-Rsquared8)*(N-1)/(N-p-1)
-print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num, southwest_num & northeast_num: "+str(Rsquared8)) 
+print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, southwest_num & northeast_num: "+str(Rsquared8)) 
 #0.728 Explained about 72.8% of variation
-print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num, southwest_num & northeast_num: "+str(Rsquared_adj8)) 
+print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, southwest_num & northeast_num: "+str(Rsquared_adj8)) 
 #0.727 Up by 0.001. Northeast Region adds value to the model.
 
 # =============================================================================
@@ -781,25 +780,31 @@ plt.show()
 # =============================================================================
 # Additional Analysis  - STEP 13 - Additional Analysis
 # =============================================================================
-#https://www.python-machinelearning.com/multi-layer-perceptron-regressor/
+#https://scikit-learn.org/stable/modules/neural_networks_supervised.html#classification
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
-from sklearn.preprocessing import StandardScaler
+from sklearn.utils.testing import ignore_warnings
 from sklearn.exceptions import ConvergenceWarning
 model = MLPRegressor()
 
-check_parameters = {
-    'hidden_layer_sizes': [(100,100)],
-    'activation': ['identity', 'relu'],
-    'solver': ['adam', 'lbfgs'],
-    'alpha': [0.0001, 0.05],
-    'learning_rate': ['constant'],
-    'learning_rate_init': [0.001]
-}
+@ignore_warnings(category=ConvergenceWarning)
+def findBestParams(): 
+    print("Checking for the optimal hyperparameters this may take several minutes...")
+    #https://www.python-machinelearning.com/multi-layer-perceptron-regressor/
+    check_parameters = {
+        'hidden_layer_sizes': [(100,)],
+        'activation': ['identity', 'relu'],
+        'solver': ['adam', 'lbfgs'],
+        'alpha': [0.0001, 0.05],
+        'learning_rate': ['constant'],
+        'learning_rate_init': [0.001, 0.05]
+    }
 
-gridsearchcv = GridSearchCV(model, check_parameters, cv=3)
-gridsearchcv.fit(x_train, y_train)
+    gridsearchcv = GridSearchCV(model, check_parameters, cv=3)
+    return gridsearchcv.fit(x_train, y_train)
 #input contains nan infinity or a value too large for dtype('float64')
+
+gridsearchcv = findBestParams()
 
 print(gridsearchcv.best_params_)
 #{'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100), 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'solver': 'lbfgs'}
@@ -822,21 +827,7 @@ Rsquared = r2_score(y_train, predictions) #0.826
 
 prediction_sum_sq_errors = sum((predictions - y_train)**2) 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#### Evaluate New Model ######
+########## Evaluate New Model ############
 predictions_test_NM = model1.predict(x_test)
 
 #Return the coefficient of determination R^2 of the prediction.
