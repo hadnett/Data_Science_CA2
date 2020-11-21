@@ -600,24 +600,24 @@ model3.fit(x_train[['smoker_rate', 'Age', 'BMI']], y_train)
 
 print(model3.coef_)
 print(model3.intercept_)
-#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+#So TotalClaims = -11306.08 + 23854.48*smoker_rate + 249.02*Age + 317.61*BMI
 
 Output = pd.DataFrame(model3.coef_, ['Smoker', 'Age', 'BMI'], columns = ['Coeff'])
 
 #Generate predictions for the train data
 predictions_train = model3.predict(x_train[['smoker_rate', 'Age', 'BMI']])
 
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 30763503377.483295
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 29620581307.7543
 
-Rsquared3 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.72
+Rsquared3 = 1-prediction_sum_sq_errors/raw_sum_sq_errors 
 
 N= data.TotalClaims.count() #1317
 p=3 
 Rsquared_adj3 = 1 - (1-Rsquared3)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared3)) 
-#0.722 Explained about 72.2% of variation
+#0.762 Explained about 76.2% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age and BMI: "+str(Rsquared_adj3)) 
-#0.721 Up by 0.026. BMI add's further value to model.
+#0.761 - improvement. BMI add's further value to model.
 
 ####### Model 4 add Children variable #######
 model4 = LinearRegression()
