@@ -678,24 +678,24 @@ model6.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'g
 
 print(model6.coef_)
 print(model6.intercept_)
-#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+#So TotalClaims = -11948.87 + 23896.25*smoker_rate + 246.28*Age + 335.08*BMI + 449.60*Children -857.73*southeast_num -79.56*gender_num
 
 Output = pd.DataFrame(model6.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num'], columns = ['Coeff'])
 
 #Generate predictions for the train data
 predictions_train = model6.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num']])
 
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30227005492.042873
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #29226904473.65604
 
-Rsquared6 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.73
+Rsquared6 = 1-prediction_sum_sq_errors/raw_sum_sq_errors
 
 N= data.TotalClaims.count() #1317
 p=6 
 Rsquared_adj6 = 1 - (1-Rsquared6)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & gender_num: "+str(Rsquared6)) 
-#0.727 Explained about 72.7% of variation
+#0.765 Explained about 76.5% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, gender_num: "+str(Rsquared_adj6)) 
-#0.725 The same as model 5. Review!
+#0.764188 - Reduction - Due to this reduction gender_num will be exlcuded from future models.
 
 ####### Model 7 add southwest_num variable #######
 model7 = LinearRegression()
@@ -704,24 +704,24 @@ model7.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num','so
 
 print(model7.coef_)
 print(model7.intercept_)
-#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+#So TotalClaims = -11894.02 + 23886.50*smoker_rate + 246.81*Age + 338.26*BMI + 449.36*Children -1078.59*southeast_num  -605.68*southwest_num
 
 Output = pd.DataFrame(model7.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num'], columns = ['Coeff'])
 
 #Generate predictions for the train data
 predictions_train = model7.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num']])
 
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30093846357.72852
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #29176285900.884792
 
-Rsquared7 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.73
+Rsquared7 = 1-prediction_sum_sq_errors/raw_sum_sq_errors
 
 N= data.TotalClaims.count() #1317
 p=6
 Rsquared_adj7 = 1 - (1-Rsquared7)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & southwest_num: "+str(Rsquared7)) 
-#0.728 Explained about 72.8% of variation
+#0.765 Explained about 76.5% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num & southwest_num : "+str(Rsquared_adj7)) 
-#0.726 Up by 0.001. Southwest Region adds value to the model.
+#0.7645 - improvement. Southwest Region adds value to the model.
 
 ####### Model 8 add northeast_num variable #######
 model8 = LinearRegression()
@@ -730,23 +730,26 @@ model8.fit(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 's
 
 print(model8.coef_)
 print(model8.intercept_)
-#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+#So TotalClaims = -12146.35 + 23887.38*smoker_rate + 246.85*Age + 337.61*BMI + 455.26*Children -812.40*southeast_num  -342.03*southwest_num + 520.82*northeast_num 
 
 Output = pd.DataFrame(model8.coef_, ['Smoker', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num', 'northeast_num'], columns = ['Coeff'])
 
 #Generate predictions for the train data
 predictions_train = model8.predict(x_train[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num', 'northeast_num']])
 
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #30032856846.9279
-Rsquared8 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.728
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) #29148269354.463562
+Rsquared8 = 1-prediction_sum_sq_errors/raw_sum_sq_errors
 
 N= data.TotalClaims.count() #1317
 p=7
 Rsquared_adj8 = 1 - (1-Rsquared8)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, southwest_num & northeast_num: "+str(Rsquared8)) 
-#0.728 Explained about 72.8% of variation
+#0.765 Explained about 76.5% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, southeast_num, southwest_num & northeast_num: "+str(Rsquared_adj8)) 
-#0.727 Up by 0.001. Northeast Region adds value to the model.
+#0.7646 - improvement. Northeast Region adds value to the model.
+
+# DECISION ------ Model 8 as proven by the rsquared adjusted value directly above.
+#TotalClaims = -12146.35 + 23887.38*smoker_rate + 246.85*Age + 337.61*BMI + 455.26*Children -812.40*southeast_num  -342.03*southwest_num + 520.82*northeast_num 
 
 # =============================================================================
 # Regression Modelling - STEP 12 - Evaluating The Model Produced
