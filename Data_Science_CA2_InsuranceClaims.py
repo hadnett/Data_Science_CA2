@@ -574,25 +574,24 @@ model2.fit(x_train[['smoker_rate', 'Age']], y_train)
 
 print(model2.coef_)
 print(model2.intercept_)
-#So TotalClaims = 8326.85 + 21871.30*smoker_rate
+#So TotalClaims = -2034.76 + 23773.97*smoker_rate + 262.71*Age
 
 Output = pd.DataFrame(model2.coef_, ['Smoker', 'Age'], columns = ['Coeff'])
 
-#Generate predictions for the train data
 predictions_train = model2.predict(x_train[['smoker_rate', 'Age']])
 
-raw_sum_sq_errors = sum((y_train.mean() - y_train)**2) # 110552759800.89622
-prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 33655558527.587227
+raw_sum_sq_errors = sum((y_train.mean() - y_train)**2) # 124509375920.14389
+prediction_sum_sq_errors = sum((predictions_train - y_train)**2) # 32825068905.40724
 
-Rsquared2 = 1-prediction_sum_sq_errors/raw_sum_sq_errors #0.70
+Rsquared2 = 1-prediction_sum_sq_errors/raw_sum_sq_errors
 
 N= data.TotalClaims.count() #1317
 p=2 
 Rsquared_adj2 = 1 - (1-Rsquared2)*(N-1)/(N-p-1)
 print("Rsquared Regression Model with Smoker Rate & Age: "+str(Rsquared2)) 
-#0.696 Explained about 69.6% of variation
+#0.7363 Explained about 73.6% of variation
 print("Rsquared Adjusted Regression Model with Smoker Rate & Age: "+str(Rsquared_adj2)) 
-#0.695 Up by 0.107. Age add's further value to model.
+#0.7359 - improvement. Age add's further value to model.
 
 ####### Model 3 add BMI variable #######
 model3 = LinearRegression()
