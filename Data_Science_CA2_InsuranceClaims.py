@@ -755,22 +755,66 @@ print("Rsquared Adjusted Regression Model with Smoker Rate, Age, BMI, Children, 
 # Regression Modelling - STEP 12 - Evaluating The Model Produced
 # =============================================================================
 
-predictions_test = model8.predict(x_test[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'gender_num', 'southwest_num', 'northeast_num']])
+predictions_test = model8.predict(x_test[['smoker_rate', 'Age', 'BMI', 'Children', 'southeast_num', 'southwest_num', 'northeast_num']])
 
 Prediction_test_MAE = sum(abs(predictions_test - y_test))/len(y_test)
 Prediction_test_MAPE = sum(abs((predictions_test - y_test)/y_test))/len(y_test)
 Prediction_test_RMSE = (sum((predictions_test - y_test)**2)/len(y_test))**0.5
 
-print(Prediction_test_MAE) #3727.11
-print(Prediction_test_MAPE) #0.3659
-print(Prediction_test_RMSE) #5523.9222
+print(Prediction_test_MAE) #4101.619
+print(Prediction_test_MAPE) #0.3918
+print(Prediction_test_RMSE) #6068.646
 
+
+#We can see from the scatter graph below that the regression model chosen (Model 8) preforms 
+#relatively well. However, it appears to experience issues when making predictions between
+#approximately 15k and 35k. It can predict total claims < 15k relatively well and is very good at
+#predicting total claims over 35k. I believe there are a number of reasons for this. Firstly
+#I believe it can predict claims under 15k with more accuracy because 73% of the total claims
+#in this dataset are under 15k. Though, this theory is null when we review the predictions
+#over 35k. However, upon seeing this graph I furthered my analysis to discover that 97% of
+#people who had total claims greater than 35k smoke. Since smoker_rate is one of this models
+#strongest correlation coefficients it may explain why predictions are so good over 35k.  
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(y_test, predictions_test)
+#Discovered how to plot trend line on scatter plot:
+#https://www.kite.com/python/answers/how-to-plot-a-linear-regression-line-on-a-scatter-plot-in-python
+m, b = np.polyfit(y_test, predictions_test, 1)
+plt.plot(y_test, m*y_test+b, 'red')
 plt.title("Predictions v Actual Test Values")
 plt.xlabel("Actual values")
 plt.ylabel("Predicted Values")
-plt.show() #Should be close to a straight line
+plt.show() 
+
+### Further Analysis to explain Anomalies in model predictions ######
+#73% of claims are below 15k
+totalClaimsUnder15 = data[data.TotalClaims < 15000].TotalClaims.count()
+print("Percentage of total claims under 15k: ", (totalClaimsUnder15/data.TotalClaims.count()) * 100)
+
+#97% of people with total claims over 35k smoke.
+smokersOver35k = data[(data.TotalClaims > 35000) & (data.smoker_rate == 1)].TotalClaims.count()
+totalOver35k = data[data.TotalClaims > 35000].TotalClaims.count()
+print("Percentage of Smokers over 35k: ", (smokersOver35k/totalOver35k) * 100)
+
+#Only 17% of the dataset is between 15k and 35k.
+totalClaimsBetween15and35k = data[(data.TotalClaims >= 15000) & (data.TotalClaims <= 35000)].TotalClaims.count()
+print("Percentage of total claims under 15k: ", (totalClaimsBetween15and35k/data.TotalClaims.count()) * 100)
+
+#60% of people with total claims between 15k and 35k Smoke
+smokersBetween15and35 = data[(data.TotalClaims >= 15000) & (data.TotalClaims <= 35000) & (data.smoker_rate == 1)].TotalClaims.count()
+totalBetween15and35 = data[(data.TotalClaims >= 15000) & (data.TotalClaims <= 35000)].TotalClaims.count()
+print("Percentage of Smokers over 35k: ", (smokersBetween15and35/totalBetween15and35) * 100)
+
+#######################################################################
+#This percentage error graph shows model 8 has a maximum positive error of approximately +3.3%
+#maximum negative error of approximately -2%. However, the majority of predictions where within 
+#the ±1% range. If we take the highest total claim within this dataset (51194.56) the predicted
+#value will likely be within the ±1% range(51194.56 * 1% = 511.94). I believe a prediction with this level of
+#accuracy should allow an insurance company to make an accurate decision regarding what premiums to
+#charge there customers. It is then a business decision as to whether or not some level of security
+#should be built into this premium to compensate for the models anomalies. It is also worth noting 
+#that the majority of predictions recieved a percentage error of 0 or above. Therefore, this model 
+#seems to predict slightly higher than the actual total claims in most cases making. 
 
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(y_test, (predictions_test - y_test)/y_test) 
@@ -845,6 +889,8 @@ print(Prediction_test_RMSE) #4273.943251422306
 
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(y_test, predictions_test_NM)
+m, b = np.polyfit(y_test, predictions_test_NM, 1)
+plt.plot(y_test, m*y_test+b, 'red')
 plt.title("Predictions v Actual Test Values")
 plt.xlabel("Actual values")
 plt.ylabel("Predicted Values")
