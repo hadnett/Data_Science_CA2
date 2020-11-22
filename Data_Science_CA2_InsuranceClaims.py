@@ -814,7 +814,7 @@ print("Percentage of Smokers over 35k: ", (smokersBetween15and35/totalBetween15a
 #charge there customers. It is then a business decision as to whether or not some level of security
 #should be built into this premium to compensate for the models anomalies. It is also worth noting 
 #that the majority of predictions recieved a percentage error of 0 or above. Therefore, this model 
-#seems to predict slightly higher than the actual total claims in most cases making. 
+#seems to predict slightly higher than the actual total claims in most cases. 
 
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(y_test, (predictions_test - y_test)/y_test) 
@@ -826,6 +826,11 @@ plt.show()
 # =============================================================================
 # Additional Analysis  - STEP 13 - Additional Analysis
 # =============================================================================
+#I discoverd MPLClassifier after reviewing Dr Kevin McDaids code from the titanicAnalysisv1
+#I then done my own research to discover MPLRegressor can be used for regression neural networks.
+#MLPRegressor is trained using backpropagation and implements multi-layer percpetrions and 
+#my learning/understanding of these concepts was supported by Joel Grus Data Science from
+#Scratch as well as other articles and videos. 
 #https://scikit-learn.org/stable/modules/neural_networks_supervised.html#classification
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
@@ -836,7 +841,12 @@ model = MLPRegressor()
 @ignore_warnings(category=ConvergenceWarning)
 def findBestParams(): 
     print("Checking for the optimal hyperparameters this may take several minutes...")
-    #https://www.python-machinelearning.com/multi-layer-perceptron-regressor/
+    #GridSearchCV is imported from sklearn and it is used to run a brute force search to 
+    #determine the best parameters to use for model in this case my neural network. The 
+    #check_parameters json is populated with possible parameters and these parameters and
+    #run against the training data using the fit method. fit() returns the best parameters
+    #for the model in a key value pair. 
+    #https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
     check_parameters = {
         'hidden_layer_sizes': [(100,)],
         'activation': ['identity', 'relu'],
@@ -848,12 +858,15 @@ def findBestParams():
 
     gridsearchcv = GridSearchCV(model, check_parameters, cv=3)
     return gridsearchcv.fit(x_train, y_train)
-#input contains nan infinity or a value too large for dtype('float64')
 
 gridsearchcv = findBestParams()
 
+#The best parameters for the model.
 print(gridsearchcv.best_params_)
-#{'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100, 100), 'learning_rate': 'constant', 'learning_rate_init': 0.001, 'solver': 'lbfgs'}
+#{'activation': 'relu', 'alpha': 0.0001, 'hidden_layer_sizes': (100,), 'learning_rate': 'constant', 'learning_rate_init': 0.05, 'solver': 'lbfgs'}
+
+#I incorprated these parameters into the model below so that each time this script is run the best
+#parameters for the training data are selected.
 model1 = MLPRegressor(hidden_layer_sizes=gridsearchcv.best_params_['hidden_layer_sizes'], activation=gridsearchcv.best_params_['activation'], alpha=gridsearchcv.best_params_['alpha'], 
                       learning_rate=gridsearchcv.best_params_['learning_rate'], solver=gridsearchcv.best_params_['solver'], 
                       max_iter=3000, learning_rate_init=gridsearchcv.best_params_['learning_rate_init'])
@@ -862,14 +875,16 @@ model1.fit(x_train, y_train)
 
 predictions = model1.predict(x_train)
 
-
-#Calculate performance metrics Accuracy, Error Rate, Precision and Recall from the confusion matrix
+#Discovered a sklearn library that includes functions for working out the metrics
+#of the model produced.
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 
 
-MSE = mean_squared_error(y_train, predictions)
-Rsquared = r2_score(y_train, predictions) #0.826
+MSE = mean_squared_error(y_train, predictions) # 21057749.042644326
+
+Rsquared = r2_score(y_train, predictions) #0.84198
+#Explained 84.2% of variation. 7.7% more than regression model 8.
 
 prediction_sum_sq_errors = sum((predictions - y_train)**2) 
 
@@ -883,10 +898,18 @@ Prediction_test_MAE = sum(abs(predictions_test_NM - y_test))/len(y_test)
 Prediction_test_MAPE = sum(abs((predictions_test_NM - y_test)/y_test))/len(y_test)
 Prediction_test_RMSE = (sum((predictions_test_NM - y_test)**2)/len(y_test))**0.5
 
-print(Prediction_test_MAE) #2769.3231535905315
-print(Prediction_test_MAPE) #0.29962781836477104
-print(Prediction_test_RMSE) #4273.943251422306
+print(Prediction_test_MAE) #2769.3231535905315 - Mean Absolute Error decreased by 1332.296 from model 8.
+print(Prediction_test_MAPE) #0.29962781836477104 - 9% better than model 8.
+print(Prediction_test_RMSE) #4273.943251422306 - Root mean sqaured error decreased by 1794.703 from model 8.
 
+#We can see from the scatter plot below that the neural network produced preforms relatively
+#well. We can see that there is a major increase in accuracy between 0 and 15k approximately
+#with most predicts occuring on or very close to the trend line. Again this model experiences
+#issues between 15k and 35k. Suggesting to me that there is something different about
+#the data between these two points. One theory is outlined in describe of model 8's scatter
+#plot. However, with that being said the predictions this model made in this range were much closer to the
+#trend line, proving that this model has a greater prediction accuracy even when the predictions
+#are not correct. 
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(y_test, predictions_test_NM)
 m, b = np.polyfit(y_test, predictions_test_NM, 1)
@@ -894,8 +917,16 @@ plt.plot(y_test, m*y_test+b, 'red')
 plt.title("Predictions v Actual Test Values")
 plt.xlabel("Actual values")
 plt.ylabel("Predicted Values")
-plt.show() #Should be close to a straight line
+plt.show()
 
+#In this graph we can see that the maximum positive percentage error is just below 0.75%
+#and the maximum negative percentage error is approximately -1%. This graph again proves
+#that this model has a greater level of accuracy than the previous model (model 8). It 
+#is also worth noting that the majority of the points in this graph are 0 or above. 
+#Therefore, this tells us that the model is more likely to over predict the total claims
+#rather than under predict, offering the security to the insurance company. It again
+#is a business decision as to whether or not to accept the models prediction to lower
+#the prediction slightly to remain competive when providing quotes for premiums. 
 figure(num=None, figsize=(8, 8), dpi=80, facecolor='w', edgecolor='k')
 plt.scatter(y_test, (predictions_test_NM - y_test)/y_test) 
 plt.title("Percentage Errors v Actual Test Values")
@@ -903,4 +934,19 @@ plt.xlabel("Actual values")
 plt.ylabel("Percentage Error Values")
 plt.show()
 
+# =============================================================================
+# Additional Analysis  - Final Thoughts
+# =============================================================================
+'''
+It is apparent that neither of the models produced are prefect and both seem to encounter
+an issue when dealing with values between 15k and 35k approximately. However, while both
+models have flaws I feel that they are both capable of predicting total claims to a level
+of accuracy that will allow an insurance company to provide an accurate quote to a customer.
+I feel that I have proved the best model for predicting total claims is the neural network
+model. By using the neural network model we can achieve a greater Rsquared value of 84.2% which is 7.7%
+more than model 8 and the mean absolute percentage error is decreased by 9%. However, even with
+this greater level of accuracy the neural network still does produce inacurrate predictions but 
+these inaccurate predictions are still more accurate than the inaccurate predictions made 
+by model 8. 
+'''
 
