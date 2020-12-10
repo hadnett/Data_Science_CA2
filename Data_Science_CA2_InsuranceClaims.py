@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-@author: William Hadnett D00223305
+@author: William Hadnett
 """
 
 import numpy as np
@@ -16,7 +16,7 @@ from matplotlib.pyplot import figure
 # =============================================================================
 
 import os
-os.chdir('/Users/williamhadnett/Documents/Data_Science/Data_Science_CA2_WilliamHadnett')
+os.chdir('****Insert File Path*****')
 
 data= pd.read_csv("insuranceCA2v1.csv")
 
